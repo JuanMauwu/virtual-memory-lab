@@ -4,14 +4,18 @@ Laboratorio de memoria virtual. Lenguaje: **C++11**. Política de reemplazo: **F
 
 ## Compilación
 ```
-make          # genera ./vmsim  (g++ -Wall -Werror -std=c++11)
-make run      # ejecuta tests/test1_basico.txt en modo detallado
+make          # genera el ejecutable ./vm del con el makefile 
+make run      # ejecuta tests/test1_basico.txt en modo detallado (-v)
 make clean
 ```
 
-## Uso
+## Uso: ejemplo con datos de testeo 1
 ```
-./vmsim <archivo> [-m KB] [-v]
+./vmsim test/test1_basico.txt
+./vmsim test/test1_basico.txt [-m KB] [-v]
+./vmsim test/test1_basico.txt [-v]
+./vmsim test/test1_basico.txt [-m KB]
+./vmsim test/test1_basico.txt [-m KB] [-v] 
 ```
 - `-m KB`: memoria física en KB (defecto y mínimo 256).
 - `-v`: imprime cada operación con su PA y si fue `[FALLO]` o `[HIT]`.
