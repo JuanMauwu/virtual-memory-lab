@@ -13,9 +13,8 @@ VirtualMemory::~VirtualMemory() {
     for (uint32_t i = 0; i < TABLE_ENTRIES; i++) delete level1[i];
 }
 
-// ---------------------------------------------------------------- Tablas
-// Devuelve la PTE de una página virtual. Si 'create' es true y la tabla de
-// nivel 2 no existe, la crea dinámicamente.
+//Devuelve la PTE de una página virtual. Si create es true y la tabla de
+//nivel 2 no existe, la crea dinámicamente.
 PTE *VirtualMemory::getPTE(uint32_t vpn, bool create) {
     uint32_t pt1 = vpn >> 10;
     uint32_t pt2 = vpn & (TABLE_ENTRIES - 1);
@@ -26,17 +25,17 @@ PTE *VirtualMemory::getPTE(uint32_t vpn, bool create) {
     return &level1[pt1]->entries[pt2];
 }
 
-// ---------------------------------------------------------------- Traducción
+//Traducción
 bool VirtualMemory::translate(uint32_t va, bool isWrite, AccessInfo &info) {
     uint32_t vpn    = va >> OFFSET_BITS;
     uint32_t offset = va & (PAGE_SIZE - 1);
 
     PTE *pte = getPTE(vpn, false);
-    if (pte == 0 || !pte->allocated) return false;   // dirección no reservada
+    if (pte == 0 || !pte->allocated) return false; 
 
     st.accesses++;
     info.faulted = false;
-    if (!pte->valid) {                               // FALLO DE PÁGINA
+    if (!pte->valid) {                               
         st.faults++;
         info.faulted = true;
         handlePageFault(vpn, *pte);
@@ -48,8 +47,7 @@ bool VirtualMemory::translate(uint32_t va, bool isWrite, AccessInfo &info) {
     return true;
 }
 
-// ---------------------------------------------------------------- Fallos
-// Busca un marco (libre o por reemplazo) y carga la página en él.
+//Busca un marco (libre o por reemplazo) y carga la página en él.
 uint32_t VirtualMemory::handlePageFault(uint32_t vpn, PTE &pte) {
     uint32_t frame;
     if (!freeFrames.empty()) {
@@ -61,7 +59,7 @@ uint32_t VirtualMemory::handlePageFault(uint32_t vpn, PTE &pte) {
         st.replacements++;
     }
 
-    // Cargar contenido: desde el "swap" si ya existía, si no, página en ceros
+    //Cargar contenido desde el "swap" si es que ya existia
     uint8_t *dst = &physMem[frame * PAGE_SIZE];
     std::map<uint32_t, std::vector<uint8_t> >::iterator it = swapSpace.find(vpn);
     if (it != swapSpace.end())
@@ -78,8 +76,7 @@ uint32_t VirtualMemory::handlePageFault(uint32_t vpn, PTE &pte) {
     return frame;
 }
 
-// ---------------------------------------------------------------- Reemplazo
-// FIFO: la víctima es el marco que lleva más tiempo en memoria.
+//Reemplazo
 // Los aciertos (hits) NO alteran el orden de la cola.
 uint32_t VirtualMemory::selectVictimFIFO() {
     uint32_t victim = fifoQueue.front();
@@ -87,7 +84,7 @@ uint32_t VirtualMemory::selectVictimFIFO() {
     return victim;
 }
 
-// Saca la página que ocupa 'frame'. Si estaba modificada se guarda en el swap.
+//Saca la página que ocupa 'frame' y si estaba modificada se guarda en el swap.
 void VirtualMemory::evictFrame(uint32_t frame) {
     uint32_t vpn = frameOwner[frame];
     PTE *pte = getPTE(vpn, false);
@@ -98,7 +95,7 @@ void VirtualMemory::evictFrame(uint32_t frame) {
     pte->valid = false;
 }
 
-// ---------------------------------------------------------------- Operaciones
+//Operaciones principales
 bool VirtualMemory::alloc(uint32_t bytes, uint32_t &startVA) {
     if (bytes == 0) return false;
     uint64_t pages = (static_cast<uint64_t>(bytes) + PAGE_SIZE - 1) / PAGE_SIZE;

@@ -35,7 +35,6 @@ int main(int argc, char **argv) {
     VirtualMemory vm(static_cast<uint32_t>(memKB * 1024));
     std::chrono::steady_clock::time_point t0 = std::chrono::steady_clock::now();
 
-    // Se lee por "tokens": funciona con un comando por línea o todos en una línea.
     std::string cmd;
     while (in >> cmd) {
         if (cmd == "alloc") {
@@ -75,7 +74,7 @@ int main(int argc, char **argv) {
 
     const Stats &s = vm.stats();
     double hit = s.accesses ? 100.0 * (s.accesses - s.faults) / s.accesses : 0.0;
-    std::printf("===== Estadísticas =====\n");
+    std::printf("\nEstadísticas\n");
     std::printf("Política: FIFO\n");
     std::printf("Memoria física: %lu KB (%u marcos)\n", memKB, vm.numFrames());
     std::printf("Total de accesos: %lu\n", s.accesses);
