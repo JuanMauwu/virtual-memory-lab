@@ -1,4 +1,3 @@
-// vm.h - Simulador de memoria virtual con paginación de 2 niveles (política FIFO)
 #ifndef VM_H
 #define VM_H
 

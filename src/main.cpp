@@ -1,4 +1,3 @@
-// main.cpp - Lee el archivo de comandos y ejecuta la simulación
 #include "vm.h"
 #include <chrono>
 #include <cstdio>

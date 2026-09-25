@@ -1,4 +1,3 @@
-// vm.cpp - Implementación del simulador (paginación 2 niveles + reemplazo FIFO)
 #include "vm.h"
 #include <algorithm>
 
