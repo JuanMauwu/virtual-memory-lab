@@ -52,4 +52,13 @@ Simulamos LRU sobre las mismas trazas (script auxiliar, no forma parte del entre
 
 ## 6. Calidad
 - Compila con `g++ -Wall -Werror -std=c++11` sin warnings.
-- Sin fugas ni errores de memoria: verificado con AddressSanitizer/LeakSanitizer/UBSan en todas las pruebas. **Pendiente para ustedes:** correr `valgrind --leak-check=full ./vmsim tests/test3_localidad.txt` en su máquina y pegar el resultado aquí.
+- Sin fugas ni errores de memoria, verificado con valgrind 3.26 en las tres pruebas:
+
+```
+$ valgrind --leak-check=full --show-leak-kinds=all ./vm tests/test3_localidad.txt
+==5494==     in use at exit: 0 bytes in 0 blocks
+==5494==     All heap blocks were freed -- no leaks are possible
+==5494==     ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+```
+
+(`test1_basico.txt` y `test2_secuencial.txt` producen exactamente el mismo resultado). Además, AddressSanitizer/LeakSanitizer/UBSan (`-fsanitize=address,undefined`) no reportan errores ni fugas en ninguna prueba.
