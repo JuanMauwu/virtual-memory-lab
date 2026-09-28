@@ -25,7 +25,6 @@ PTE *VirtualMemory::getPTE(uint32_t vpn, bool create) {
     return &level1[pt1]->entries[pt2];
 }
 
-//Traducción
 bool VirtualMemory::translate(uint32_t va, bool isWrite, AccessInfo &info) {
     uint32_t vpn    = va >> OFFSET_BITS;
     uint32_t offset = va & (PAGE_SIZE - 1);
@@ -47,14 +46,13 @@ bool VirtualMemory::translate(uint32_t va, bool isWrite, AccessInfo &info) {
     return true;
 }
 
-//Busca un marco (libre o por reemplazo) y carga la página en él.
 uint32_t VirtualMemory::handlePageFault(uint32_t vpn, PTE &pte) {
     uint32_t frame;
     if (!freeFrames.empty()) {
         frame = freeFrames.back();
         freeFrames.pop_back();
     } else {
-        frame = selectVictimFIFO();   // política de reemplazo
+        frame = selectVictimFIFO(); 
         evictFrame(frame);
         st.replacements++;
     }
@@ -72,19 +70,18 @@ uint32_t VirtualMemory::handlePageFault(uint32_t vpn, PTE &pte) {
     pte.accessed = false;
     pte.dirty    = false;
     frameOwner[frame] = vpn;
-    fifoQueue.push_back(frame);       // entra al final de la cola FIFO
+    fifoQueue.push_back(frame);       //entra al final de la cola FIFO
     return frame;
 }
 
-//Reemplazo
-// Los aciertos (hits) NO alteran el orden de la cola.
+//los aciertos (hits) NO alteran el orden de la cola.
 uint32_t VirtualMemory::selectVictimFIFO() {
     uint32_t victim = fifoQueue.front();
     fifoQueue.pop_front();
     return victim;
 }
 
-//Saca la página que ocupa 'frame' y si estaba modificada se guarda en el swap.
+//Saca la página que ocupa 'frame' y si estaba modificada se guarda en el swap simulado.
 void VirtualMemory::evictFrame(uint32_t frame) {
     uint32_t vpn = frameOwner[frame];
     PTE *pte = getPTE(vpn, false);
@@ -99,7 +96,7 @@ void VirtualMemory::evictFrame(uint32_t frame) {
 bool VirtualMemory::alloc(uint32_t bytes, uint32_t &startVA) {
     if (bytes == 0) return false;
     uint64_t pages = (static_cast<uint64_t>(bytes) + PAGE_SIZE - 1) / PAGE_SIZE;
-    if (nextVA + pages * PAGE_SIZE > (1ULL << 32)) return false;  // se acabó el espacio de 32 bits
+    if (nextVA + pages * PAGE_SIZE > (1ULL << 32)) return false; 
 
     startVA = static_cast<uint32_t>(nextVA);
     uint32_t firstVpn = startVA >> OFFSET_BITS;

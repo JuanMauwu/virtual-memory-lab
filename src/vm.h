@@ -8,16 +8,16 @@
 
 //PT1 (10 bits), PT2 (10 bits), Offset (12 bits)
 const uint32_t OFFSET_BITS   = 12;
-const uint32_t PAGE_SIZE     = 1u << OFFSET_BITS;   // 4096 bytes
-const uint32_t TABLE_ENTRIES = 1024;                // 2^10 entradas por tabla
-const uint32_t MIN_PHYS_BYTES = 256 * 1024;         // mínimo exigido: 256 KB
+const uint32_t PAGE_SIZE     = 1u << OFFSET_BITS;   //4096 bytes
+const uint32_t TABLE_ENTRIES = 1024;                //2^10 entradas por tabla
+const uint32_t MIN_PHYS_BYTES = 256 * 1024;         //mínimo: 256 KB
 
 struct PTE {
     uint32_t frame     = 0;      
-    bool valid         = false;  // true = la página está en memoria física
-    bool accessed      = false;  // se leyó o escribió alguna vez desde que se cargó
-    bool dirty         = false;  // se escribió desde que se cargó
-    bool allocated     = false;  // la página pertenece a una región reservada con alloc
+    bool valid         = false;
+    bool accessed      = false;
+    bool dirty         = false;
+    bool allocated     = false;
 };
 
 struct Level2Table {
@@ -30,7 +30,6 @@ struct Stats {
     unsigned long replacements = 0;
 };
 
-// Resultado de un acceso (para poder imprimir el detalle)
 struct AccessInfo {
     uint32_t pa      = 0;
     bool     faulted = false;
@@ -56,20 +55,20 @@ private:
     VirtualMemory(const VirtualMemory &);
     VirtualMemory &operator=(const VirtualMemory &);
 
-    PTE *getPTE(uint32_t vpn, bool create);          // recorre las 2 tablas
-    uint32_t handlePageFault(uint32_t vpn, PTE &pte); // obtiene marco y carga la página
-    uint32_t selectVictimFIFO();                      // política de reemplazo
-    void evictFrame(uint32_t frame);                  // saca la página del marco
+    PTE *getPTE(uint32_t vpn, bool create);         
+    uint32_t handlePageFault(uint32_t vpn, PTE &pte); 
+    uint32_t selectVictimFIFO();                      
+    void evictFrame(uint32_t frame);                  
 
-    Level2Table *level1[TABLE_ENTRIES];        // tabla de nivel 1
-    std::vector<uint8_t> physMem;              // memoria física simulada
-    uint32_t nFrames;                          // cantidad de marcos
-    std::vector<uint32_t> frameOwner;          // marco -> VPN que lo ocupa
-    std::vector<uint32_t> freeFrames;          // marcos libres
-    std::deque<uint32_t> fifoQueue;            // marcos en orden de llegada (front = más viejo)
+    Level2Table *level1[TABLE_ENTRIES];        
+    std::vector<uint8_t> physMem;             
+    uint32_t nFrames;                         
+    std::vector<uint32_t> frameOwner;         
+    std::vector<uint32_t> freeFrames;          
+    std::deque<uint32_t> fifoQueue;            
     std::map<uint32_t, std::vector<uint8_t> > swapSpace; // "disco": VPN -> contenido
-    std::map<uint32_t, uint32_t> regions;      // VA inicial -> número de páginas
-    uint64_t nextVA;                           // siguiente VA libre (asignador simple)
+    std::map<uint32_t, uint32_t> regions;      
+    uint64_t nextVA;                           
     Stats st;
 };
 
