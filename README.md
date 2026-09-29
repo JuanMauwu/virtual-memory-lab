@@ -38,6 +38,3 @@ src/main.cpp  lectura del archivo y estadísticas
 tests/        programas de prueba (+ generar_pruebas.py)
 REPORTE.md    reporte de análisis
 ```
-
-## Nota
-El enunciado menciona `gcc -std=c99`; al usar C++ compilamos con `g++ -Wall -Werror -std=c++11`, con la misma exigencia de cero warnings.
