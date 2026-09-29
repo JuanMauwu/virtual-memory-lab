@@ -28,8 +28,6 @@ Cada vez que una página se carga en un marco, ese marco entra al final de `fifo
 | 2. Secuencial: 100 págs × 2 pasadas | 200 | 200 | 0.00 % | 136 |
 | 3. Localidad: 2000 accesos, 80 % a 20 págs "calientes" | 2000 | 236 | 88.20 % | 172 |
 
-Reproducir: `./vmsim tests/testN_*.txt` (el test 3 se genera con semilla fija en `tests/generar_pruebas.py`).
-
 ## 4. Análisis
 - **Prueba 1:** las dos primeras referencias son fallos obligatorios (*cold misses*, paginación por demanda); las relecturas son hits. No hay reemplazos porque todo cabe.
 - **Prueba 2:** 100 páginas no caben en 64 marcos. Con FIFO, al llegar a la página 64 se empieza a expulsar justo las más antiguas, que son las que se necesitarán primero en la segunda pasada, así que **todo acceso es fallo** (0 % de hit rate). Con 512 KB (`-m 512`) las 100 páginas caben y el hit rate sube a 50 % (solo fallan las primeras 100), sin reemplazos.
