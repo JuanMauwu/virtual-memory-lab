@@ -23,20 +23,24 @@ int main(int argc, char **argv) {
         else if (file == 0) file = argv[i];
         else { usage(argv[0]); return 1; }
     }
+
     if (file == 0) { usage(argv[0]); return 1; }
+
     if (memKB * 1024 < MIN_PHYS_BYTES) {
         std::printf("Error: la memoria física mínima es 256 KB\n");
         return 1;
     }
 
     std::ifstream in(file);
+
     if (!in) { std::printf("Error: no se pudo abrir '%s'\n", file); return 1; }
 
     VirtualMemory vm(static_cast<uint32_t>(memKB * 1024));
     std::chrono::steady_clock::time_point t0 = std::chrono::steady_clock::now();
-
     std::string cmd;
+
     while (in >> cmd) {
+        
         if (cmd == "alloc") {
             unsigned long long bytes; in >> bytes;
             uint32_t start;
@@ -46,12 +50,13 @@ int main(int argc, char **argv) {
         } else if (cmd == "write" || cmd == "read" || cmd == "free") {
             std::string addrStr; in >> addrStr;
             unsigned long long addr = std::strtoull(addrStr.c_str(), 0, 0); // acepta decimal y 0x..
+            
             if (addr > 0xFFFFFFFFULL) { std::printf("Error: VA fuera de 32 bits: %s\n", addrStr.c_str()); continue; }
             uint32_t va = static_cast<uint32_t>(addr);
             AccessInfo info;
 
             if (cmd == "write") {
-                unsigned int value; in >> value;   // se guarda 1 byte (0-255)
+                unsigned int value; in >> value; 
                 if (vm.write(va, static_cast<uint8_t>(value), info)) {
                     if (verbose) std::printf("write 0x%X = %u -> PA 0x%X  %s\n", va, value & 0xFF, info.pa, info.faulted ? "[FALLO]" : "[HIT]");
                 } else std::printf("Error: write en VA 0x%X no reservada (segfault)\n", va);
