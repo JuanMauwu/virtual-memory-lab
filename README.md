@@ -11,11 +11,11 @@ make clean
 
 ## Uso: ejemplo con datos de testeo 1
 ```
-./vmsim tests/test1_basico.txt
-./vmsim tests/test1_basico.txt [-m KB] [-v]
-./vmsim tests/test1_basico.txt [-v]
-./vmsim teststest1_basico.txt [-m KB]
-./vmsim tests/test1_basico.txt [-m KB] [-v] 
+./vm tests/test1_basico.txt
+./vm tests/test1_basico.txt [-m KB] [-v]
+./vm tests/test1_basico.txt [-v]
+./vm teststest1_basico.txt [-m KB]
+./vm tests/test1_basico.txt [-m KB] [-v] 
 ```
 - `-m KB`: memoria física en KB (defecto y mínimo 256).
 - `-v`: imprime cada operación con su PA y si fue `[FALLO]` o `[HIT]`.
